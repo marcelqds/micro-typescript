@@ -130,14 +130,13 @@ describe( "Category Unit Tests", () => {
 			{props: {name: "Movie"} },
 			{props: {name: "Movie"}, id: undefined },
 			{props: {name: "Movie"}, id: null},
-			{props: {name: "Movie"}, id: '5d74045a-a0b0-4a46-8189-42e64a2669ed'},			
+			{props: {name: "Movie"}, id: '5d74045a-a0b0-4a46-8189-42e64a2669ed'}
 		];
 		
 		data.forEach((dt) => {
 			let category = new Category(dt.props,dt.id);
 			expect(category.id).not.toBeNull();
-			if(typeof dt.id === 'string')
-				expect(category.id).toBe(dt.id);
+			if(typeof dt.id === 'string') expect(category.id).toBe(dt.id);
 		});
 		
 	});
