@@ -1,5 +1,6 @@
 //import { randomUUID } from 'crypto';
-import { UniqueEntityId } from '../../../@seedwork/domain/unique-entity-id';
+import { Entity } from '@seedwork/domain/entity/entity';
+import { UniqueEntityId } from '../../../@seedwork/domain/value-objects/unique-entity-id';
 //limit partial
 
 export type CategoryProperties = {
@@ -9,40 +10,50 @@ export type CategoryProperties = {
    	created_at?: Date;
 }
 
+interface PropsUpdateCategory {
+  name?: string;
+  description?: string;
+}
+
 /*
-	
 	entidade - identidade, comportamentos e atributos
 	id auto incremento
 	politica e detalhes
 	UUID - Universally Unique Indentifier V4 - IETF RFC
 */
-export class Category{
-	public readonly id: UniqueEntityId;
-	
-    constructor(public readonly props: CategoryProperties, id?: UniqueEntityId){    	
-    	this.id = id || new UniqueEntityId();    	    	
-    	//'12345678-1234-1234-b123-123456123456'
-    	
+
+export class Category {
+// export class Category extends Entity<CategoryProperties>{
+    public readonly id: UniqueEntityId;
+
+    constructor(public readonly props: CategoryProperties, id?: UniqueEntityId){
+      //super(props,id);    	
+      this.id = id || new UniqueEntityId();      
     	this.description = this.props.description;
     	this.is_active = this.props.is_active;
-    	this.created_at = this.props.created_at;    	
+    	this.created_at = this.props.created_at;
+
     }
     // Entidade vs Entidades Anemicas
     // TDD - Kent Beck
     // Tests - Fail - Success - Refactor
     
-    private set description(value: string){
+    private set description(value: any){
         	this.props.description = value ?? null;
     }
 
-    private set is_active(value: boolean){
+    private set is_active(value: boolean|undefined){
     	this.props.is_active = value ?? true;
     }
 
-    private set created_at(value: Date){
+    private set created_at(value: Date | undefined){
     	this.props.created_at = value ?? new Date();
     }
-	    
+	  
+    private set name(value: string| undefined){
+      this.props.name = value ?? this.props.name;
+    }
+
     get name(): string {
     	return this.props.name;
     }
@@ -56,9 +67,22 @@ export class Category{
     }
 
     get created_at(){
-    	return this.props.created_at;
-    }   
-    
+    	return this.props.created_at as Date;
+    }
+
+    update(props:PropsUpdateCategory){
+      this.name = props.name;
+      this.description = props.description;
+    }
+
+    activate(){
+      this.is_active = true;
+    }
+
+    deactive(){
+      this.is_active = false;
+    }
+
 }
 
 /*

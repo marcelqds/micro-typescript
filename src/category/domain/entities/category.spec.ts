@@ -2,13 +2,14 @@ import { Category, CategoryProperties } from './category';
 import { omit } from 'lodash';
 
 describe( "Category Unit Tests", () => {
-
+	
     test('constructor of category', () => {
     	// Triple AAA - Arrange Act Assert 
     	//Arrange
     	// Act
     	
         let category = new Category({name: "Movie"});
+		
         let props = omit(category.props,'created_at');
         expect(props).toStrictEqual({
         	name: "Movie",
@@ -25,11 +26,16 @@ describe( "Category Unit Tests", () => {
 			is_active: false
 		});
 		let created_at = new Date();		
-        expect(category.props).toStrictEqual({
+		let propsDateString = category.props.created_at?.toISOString().split('.')[0];
+		let createdDateString = created_at.toISOString().split('.')[0];
+		expect(createdDateString).toBe(propsDateString);
+
+		
+		const propsCheck = omit(category.props,'created_at');
+        expect(propsCheck).toStrictEqual({
         	name: "Movie",
 			description: "some description",
-			is_active: false,
-			created_at
+			is_active: false,			
         });
 
 
@@ -66,7 +72,6 @@ describe( "Category Unit Tests", () => {
 			created_at
 		});
 		
-   		
 		//Assert       
         /*expect(category.name).toBe("Movie");
         expect(category.description).toBe("description");
@@ -76,10 +81,12 @@ describe( "Category Unit Tests", () => {
         
     }); 
 
+
     test('getter of name field', () => {
     	const category = new Category({ name: "Average"});
     	expect(category.name).toBe('Average');    	
     });
+
 
     test('getter and setter of description field', () => {
     	let category = new Category({ name: 'Movie', description: 'some description'});    	
@@ -99,6 +106,7 @@ describe( "Category Unit Tests", () => {
     	expect(category.description).toBeNull();
     	    	
     });
+
 
 	test('getter and setter of is_active prop', () => {
 		let category = new Category({name: "Movie", is_active: true});
@@ -123,6 +131,7 @@ describe( "Category Unit Tests", () => {
 		expect(category.created_at).toBe(created_at);	
 	});
 
+
 	test('id field', () => {
 		type CategoryData = { props: CategoryProperties, id?: string};
 		
@@ -140,7 +149,55 @@ describe( "Category Unit Tests", () => {
 		});
 		
 	});
+
+	it('should update category field descripton if not send name and description prop', () =>{
+		let category = new Category({name: "Serie", description: "Novidade"});
+		category.update({});
+		expect(category.name).toBe('Serie');
+		expect(category.description).toBeNull();
+	});
+
+	test('should update category name if send name prop', () => {
+		let category = new Category({name: "Serie"});
+		category.update({name: "Movie"});		
+		expect(category.name).toBe("Movie");
+
+		category.update({name: 'Serie'});
+		expect(category.name).toBe("Serie");
+
+	});
+
+	it('should update category description if send description prop', () => {
+		let category = new Category({name: "Serie"});
+		category.update({ description: "fake-description"});
+		expect(category.name).toBe("Serie");
+		expect(category.description).toBe("fake-description");
+	});
+
+	it('should update category name and description',() => {
+		let category = new Category({name: "Serie"});
+		category.update({name: "Movie", description: "movie"});
+		expect(category.name).toBe("Movie");
+		expect(category.description).toBe("movie");
+	});
+
+	test('activate and deactivate category', () => {
+		let category = new Category({name: "Movie", is_active: false});
+		category.activate();
+		expect(category.is_active).toBeTruthy();
+
+
+		category.deactive();
+		expect(category.is_active).toBeFalsy();
+
+
+		category.activate();
+		expect(category.is_active).toBeTruthy();
+	});
+
+	test('deactive category', () => {
+
+	});
     
 });
-
 // CI - primeiro os testes Unitário, e por último o teste de integração
